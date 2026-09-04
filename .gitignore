@@ -1,0 +1,23 @@
+# Datasets
+datasets/
+
+# Generated outputs
+inference_outputs/
+failure_analysis/
+prototype_inference/
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+
+# Python cache
+__pycache__/
+**/__pycache__/
+*.pyc
+
+# Local experiment files
+ml/inference test.ipynb
+notebooks/04_Damage_Severity_Scoring.ipynb.ipynb
+
+# Local project files
+project_structure.txt

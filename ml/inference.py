@@ -1,5 +1,9 @@
 from pathlib import Path
+
+from PIL import Image
 from ultralytics import YOLO
+
+from .severity import calculate_severity
 
 
 # ============================================================
@@ -27,12 +31,12 @@ model = YOLO(str(MODEL_PATH))
 
 
 # ============================================================
-# DAMAGE DETECTION
+# DAMAGE DETECTION + SEVERITY
 # ============================================================
 
 def detect_damage(image):
     """
-    Detect road damage in an image.
+    Detect road damage and calculate road-condition severity.
 
     Parameters
     ----------
@@ -42,8 +46,19 @@ def detect_damage(image):
     Returns
     -------
     dict
-        Structured road-damage detection result.
+        Structured road-damage detection and severity result.
     """
+
+    # --------------------------------------------------------
+    # Get original image dimensions
+    # --------------------------------------------------------
+
+    with Image.open(image) as img:
+        image_width, image_height = img.size
+
+    # --------------------------------------------------------
+    # YOLO inference
+    # --------------------------------------------------------
 
     results = model.predict(
         source=image,
@@ -78,10 +93,25 @@ def detect_damage(image):
                 ]
             })
 
+    # --------------------------------------------------------
+    # Calculate severity
+    # --------------------------------------------------------
+
+    severity = calculate_severity(
+        detections=detections,
+        image_width=image_width,
+        image_height=image_height
+    )
+
+    # --------------------------------------------------------
+    # Final result
+    # --------------------------------------------------------
+
     return {
         "damage_detected": len(detections) > 0,
         "damage_count": len(detections),
-        "detections": detections
+        "detections": detections,
+        "severity": severity
     }
 
 
@@ -108,6 +138,7 @@ if __name__ == "__main__":
     print(test_image)
 
     if not test_image.exists():
+
         print("\nTest image not found!")
         print("Change the test_image path in this file.")
 
@@ -117,5 +148,5 @@ if __name__ == "__main__":
 
         output["image"] = test_image.name
 
-        print("\nDetection result:")
-        print(output)ok 
+        print("\nDetection + Severity result:")
+        print(output)
