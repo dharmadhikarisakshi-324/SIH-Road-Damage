@@ -1,0 +1,9 @@
+path: D:/sih-rdd2022/datasets/processed/rdd4
+train: images/train
+val: images/val
+
+names:
+  0: D00
+  1: D10
+  2: D20
+  3: D40
